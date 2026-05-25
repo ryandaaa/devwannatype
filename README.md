@@ -72,8 +72,7 @@ it is a small, monospace, dark-by-default workspace that opens in a second and s
 
 ## screenshots
 
-`<img width="1920" height="1080" alt="{FE1AA776-B19B-4193-907C-E6B254DA6CF3}" src="https://github.com/user-attachments/assets/3a201fc6-83f8-40c3-9ccf-5bfc6e08af8c" />
-`
+<img width="1920" height="1080" alt="{FE1AA776-B19B-4193-907C-E6B254DA6CF3}" src="https://github.com/user-attachments/assets/3a201fc6-83f8-40c3-9ccf-5bfc6e08af8c" />
 
 ## install
 
