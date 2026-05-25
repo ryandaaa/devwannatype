@@ -1,0 +1,338 @@
+@import "@fontsource/geist-mono/400.css";
+@import "@fontsource/geist-mono/500.css";
+@import "@fontsource/geist-mono/600.css";
+@import "@material-symbols/font-400/outlined.css";
+@import "../features/preview/hljs-mono.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================================================
+ * Theme tokens — CSS variables (RGB tuples).
+ * Tailwind colors di-define sebagai rgb(var(--c-X) / <alpha-value>).
+ * Tambah theme baru: kasih class baru di <html>, definisikan tuple di sini.
+ * ============================================================================ */
+
+:root,
+.theme-dark {
+  --c-background: 20 19 18;
+  --c-surface: 20 19 18;
+  --c-surface-dim: 20 19 18;
+  --c-surface-bright: 58 57 56;
+  --c-surface-container-lowest: 15 14 13;
+  --c-surface-container-low: 28 27 26;
+  --c-surface-container: 33 31 30;
+  --c-surface-container-high: 43 42 40;
+  --c-surface-container-highest: 54 52 51;
+  --c-surface-variant: 54 52 51;
+  --c-on-surface: 230 225 223;
+  --c-on-surface-variant: 196 199 200;
+  --c-on-background: 230 225 223;
+  --c-primary: 255 255 255;
+  --c-on-primary: 47 49 49;
+  --c-primary-container: 226 226 226;
+  --c-on-primary-container: 99 100 101;
+  --c-secondary: 200 198 195;
+  --c-secondary-container: 71 71 68;
+  --c-on-secondary: 49 48 46;
+  --c-on-secondary-container: 183 181 178;
+  --c-tertiary: 255 255 255;
+  --c-tertiary-container: 234 224 221;
+  --c-on-tertiary: 52 47 46;
+  --c-on-tertiary-container: 106 99 97;
+  --c-outline: 142 145 146;
+  --c-outline-variant: 68 71 72;
+  --c-error: 255 180 171;
+  --c-on-error: 105 0 5;
+  --c-error-container: 147 0 10;
+  --c-on-error-container: 255 218 214;
+  --c-inverse-surface: 230 225 223;
+  --c-inverse-on-surface: 50 48 47;
+  --c-inverse-primary: 93 95 95;
+}
+
+.theme-light {
+  --c-background: 244 243 241;
+  --c-surface: 244 243 241;
+  --c-surface-dim: 232 231 228;
+  --c-surface-bright: 255 254 252;
+  --c-surface-container-lowest: 255 255 255;
+  --c-surface-container-low: 240 239 236;
+  --c-surface-container: 235 234 231;
+  --c-surface-container-high: 225 223 219;
+  --c-surface-container-highest: 215 213 209;
+  --c-surface-variant: 220 218 213;
+  --c-on-surface: 26 25 24;
+  --c-on-surface-variant: 77 77 75;
+  --c-on-background: 26 25 24;
+  --c-primary: 26 25 24;
+  --c-on-primary: 244 243 241;
+  --c-primary-container: 220 218 213;
+  --c-on-primary-container: 60 59 57;
+  --c-secondary: 77 77 75;
+  --c-secondary-container: 215 213 209;
+  --c-on-secondary: 244 243 241;
+  --c-on-secondary-container: 60 59 57;
+  --c-tertiary: 26 25 24;
+  --c-tertiary-container: 215 213 209;
+  --c-on-tertiary: 244 243 241;
+  --c-on-tertiary-container: 77 77 75;
+  --c-outline: 130 128 124;
+  --c-outline-variant: 182 180 175;
+  --c-error: 179 38 30;
+  --c-on-error: 255 255 255;
+  --c-error-container: 249 222 220;
+  --c-on-error-container: 65 14 11;
+  --c-inverse-surface: 26 25 24;
+  --c-inverse-on-surface: 244 243 241;
+  --c-inverse-primary: 130 128 124;
+}
+
+.theme-pink {
+  --c-background: 253 226 232;
+  --c-surface: 253 226 232;
+  --c-surface-dim: 248 208 217;
+  --c-surface-bright: 255 240 244;
+  --c-surface-container-lowest: 255 240 244;
+  --c-surface-container-low: 251 215 224;
+  --c-surface-container: 247 199 211;
+  --c-surface-container-high: 240 174 191;
+  --c-surface-container-highest: 232 152 173;
+  --c-surface-variant: 244 188 201;
+  --c-on-surface: 74 26 39;
+  --c-on-surface-variant: 122 60 76;
+  --c-on-background: 74 26 39;
+  --c-primary: 178 36 70;
+  --c-on-primary: 253 226 232;
+  --c-primary-container: 247 199 211;
+  --c-on-primary-container: 90 30 49;
+  --c-secondary: 122 60 76;
+  --c-secondary-container: 232 152 173;
+  --c-on-secondary: 253 226 232;
+  --c-on-secondary-container: 90 30 49;
+  --c-tertiary: 178 36 70;
+  --c-tertiary-container: 240 174 191;
+  --c-on-tertiary: 253 226 232;
+  --c-on-tertiary-container: 122 60 76;
+  --c-outline: 184 110 130;
+  --c-outline-variant: 219 153 173;
+  --c-error: 179 38 30;
+  --c-on-error: 255 255 255;
+  --c-error-container: 249 222 220;
+  --c-on-error-container: 65 14 11;
+  --c-inverse-surface: 74 26 39;
+  --c-inverse-on-surface: 253 226 232;
+  --c-inverse-primary: 219 153 173;
+}
+
+.theme-rose-pine {
+  --c-background: 25 23 36;
+  --c-surface: 25 23 36;
+  --c-surface-dim: 22 18 31;
+  --c-surface-bright: 57 54 80;
+  --c-surface-container-lowest: 22 18 31;
+  --c-surface-container-low: 31 29 46;
+  --c-surface-container: 38 35 58;
+  --c-surface-container-high: 42 40 62;
+  --c-surface-container-highest: 57 54 80;
+  --c-surface-variant: 42 40 62;
+  --c-on-surface: 224 222 244;
+  --c-on-surface-variant: 144 140 170;
+  --c-on-background: 224 222 244;
+  --c-primary: 235 188 186;
+  --c-on-primary: 25 23 36;
+  --c-primary-container: 38 35 58;
+  --c-on-primary-container: 224 222 244;
+  --c-secondary: 235 111 146;
+  --c-secondary-container: 38 35 58;
+  --c-on-secondary: 25 23 36;
+  --c-on-secondary-container: 224 222 244;
+  --c-tertiary: 196 167 231;
+  --c-tertiary-container: 38 35 58;
+  --c-on-tertiary: 25 23 36;
+  --c-on-tertiary-container: 235 188 186;
+  --c-outline: 110 106 134;
+  --c-outline-variant: 68 65 94;
+  --c-error: 235 111 146;
+  --c-on-error: 25 23 36;
+  --c-error-container: 75 35 50;
+  --c-on-error-container: 235 188 186;
+  --c-inverse-surface: 224 222 244;
+  --c-inverse-on-surface: 25 23 36;
+  --c-inverse-primary: 110 106 134;
+}
+
+.theme-solarized-light {
+  --c-background: 253 246 227;
+  --c-surface: 253 246 227;
+  --c-surface-dim: 238 232 213;
+  --c-surface-bright: 255 251 233;
+  --c-surface-container-lowest: 255 251 233;
+  --c-surface-container-low: 244 234 208;
+  --c-surface-container: 238 232 213;
+  --c-surface-container-high: 224 216 192;
+  --c-surface-container-highest: 211 201 174;
+  --c-surface-variant: 224 216 192;
+  --c-on-surface: 88 110 117;
+  --c-on-surface-variant: 101 123 131;
+  --c-on-background: 88 110 117;
+  --c-primary: 38 139 210;
+  --c-on-primary: 253 246 227;
+  --c-primary-container: 224 216 192;
+  --c-on-primary-container: 7 54 66;
+  --c-secondary: 42 161 152;
+  --c-secondary-container: 224 216 192;
+  --c-on-secondary: 253 246 227;
+  --c-on-secondary-container: 7 54 66;
+  --c-tertiary: 181 137 0;
+  --c-tertiary-container: 224 216 192;
+  --c-on-tertiary: 253 246 227;
+  --c-on-tertiary-container: 101 123 131;
+  --c-outline: 147 161 161;
+  --c-outline-variant: 184 178 146;
+  --c-error: 220 50 47;
+  --c-on-error: 255 255 255;
+  --c-error-container: 245 215 213;
+  --c-on-error-container: 88 16 13;
+  --c-inverse-surface: 7 54 66;
+  --c-inverse-on-surface: 253 246 227;
+  --c-inverse-primary: 147 161 161;
+}
+
+.theme-nord {
+  --c-background: 46 52 64;
+  --c-surface: 46 52 64;
+  --c-surface-dim: 39 43 53;
+  --c-surface-bright: 76 86 106;
+  --c-surface-container-lowest: 39 43 53;
+  --c-surface-container-low: 53 58 71;
+  --c-surface-container: 59 66 82;
+  --c-surface-container-high: 67 76 94;
+  --c-surface-container-highest: 76 86 106;
+  --c-surface-variant: 67 76 94;
+  --c-on-surface: 216 222 233;
+  --c-on-surface-variant: 179 190 204;
+  --c-on-background: 216 222 233;
+  --c-primary: 136 192 208;
+  --c-on-primary: 46 52 64;
+  --c-primary-container: 67 76 94;
+  --c-on-primary-container: 216 222 233;
+  --c-secondary: 143 188 187;
+  --c-secondary-container: 67 76 94;
+  --c-on-secondary: 46 52 64;
+  --c-on-secondary-container: 216 222 233;
+  --c-tertiary: 129 161 193;
+  --c-tertiary-container: 67 76 94;
+  --c-on-tertiary: 46 52 64;
+  --c-on-tertiary-container: 216 222 233;
+  --c-outline: 76 86 106;
+  --c-outline-variant: 67 76 94;
+  --c-error: 191 97 106;
+  --c-on-error: 46 52 64;
+  --c-error-container: 76 41 47;
+  --c-on-error-container: 224 175 180;
+  --c-inverse-surface: 216 222 233;
+  --c-inverse-on-surface: 46 52 64;
+  --c-inverse-primary: 76 86 106;
+}
+
+:root {
+  color-scheme: dark;
+}
+.theme-light,
+.theme-pink,
+.theme-solarized-light {
+  color-scheme: light;
+}
+.theme-rose-pine,
+.theme-nord {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+html,
+body {
+  background: transparent;
+}
+
+body {
+  font-family: "Geist Mono", ui-monospace, monospace;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Window chrome — rounded corners + thin outline */
+.dwt-window {
+  border-radius: 10px;
+  outline: 1px solid rgb(var(--c-surface-container-high));
+  outline-offset: -1px;
+}
+
+/* Custom scrollbar — selaras token */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--c-surface-container-high));
+  border-radius: 4px;
+  border: 2px solid rgb(var(--c-background));
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--c-outline-variant));
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
+  user-select: none;
+  line-height: 1;
+}
+
+/* CodeMirror host fills its container */
+.cm-host > .cm-editor {
+  height: 100%;
+}
+.cm-host .cm-editor.cm-focused {
+  outline: none;
+}
+
+/* Save indicator pulse */
+@keyframes dwt-pulse {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.dwt-pulse {
+  animation: dwt-pulse 1.2s ease-in-out infinite;
+}
+
+/* Smooth panel transitions — width animasi saat collapse */
+.dwt-anim-width {
+  transition: width 160ms ease-out;
+}
+.dwt-anim-bottom {
+  transition: padding-bottom 160ms ease-out;
+}
+
+/* Fade transition untuk preview ↔ editor */
+.dwt-fade {
+  transition: opacity 180ms ease-in-out;
+}

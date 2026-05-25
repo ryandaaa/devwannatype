@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "devwannatype",
+  "version": "1.0.0",
+  "identifier": "dev.wannatype.app",
+  "build": {
+    "beforeDevCommand": "bun run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "devwannatype",
+        "width": 1280,
+        "height": 800,
+        "minWidth": 960,
+        "minHeight": 600,
+        "decorations": false,
+        "resizable": true,
+        "fullscreen": false,
+        "theme": "Dark",
+        "transparent": true,
+        "shadow": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "publisher": "ryandaaa",
+    "copyright": "Copyright (c) 2026 ryandaaa",
+    "category": "DeveloperTool",
+    "shortDescription": "local-first developer notes workspace",
+    "longDescription": "A quiet, fast, local-first notes workspace for developers. Markdown documents, language-tagged code snippets, and shell command recipes with autosave, full-text search, tags, a built-in terminal, and instant export. No account, no cloud, no AI assistant.",
+    "homepage": "https://github.com/ryandaaa",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "fileAssociations": [
+      {
+        "ext": ["md", "markdown"],
+        "name": "Markdown Document",
+        "description": "Markdown document",
+        "role": "Editor",
+        "mimeType": "text/markdown"
+      },
+      {
+        "ext": ["txt"],
+        "name": "Plain Text Document",
+        "description": "Plain text document",
+        "role": "Editor",
+        "mimeType": "text/plain"
+      }
+    ],
+    "windows": {
+      "wix": {
+        "language": "en-US"
+      },
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "installMode": "both",
+        "displayLanguageSelector": false,
+        "languages": ["English"],
+        "compression": "lzma"
+      }
+    }
+  },
+  "plugins": {
+    "sql": {
+      "preload": []
+    }
+  }
+}

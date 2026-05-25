@@ -1,0 +1,56 @@
+# ─── Build outputs ───────────────────────────────────────────────────────
+dist/
+build/
+out/
+.vite/
+
+# Frontend deps
+node_modules/
+
+# Rust / Cargo
+src-tauri/target/
+src-tauri/target-prod/
+src-tauri/gen/schemas/
+# Cargo.lock di-track untuk binary project — reproducible build
+
+# Installers (binary artefact, distribusikan via GitHub Releases)
+installers/
+
+# ─── Logs & runtime files ────────────────────────────────────────────────
+*.log
+.tauri-dev.log
+.tauri-dev.err.log
+.tauri-build.log
+.tauri-build.err.log
+.tauri-dev.pid
+.tauri-build.pid
+
+# ─── Editor / IDE ────────────────────────────────────────────────────────
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ─── OS ──────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+ehthumbs.db
+
+# ─── Environment & secrets ───────────────────────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ─── Bun ─────────────────────────────────────────────────────────────────
+# bun.lockb di-track untuk reproducible install. Hapus baris ini kalau prefer untrack.
+
+# ─── Misc ────────────────────────────────────────────────────────────────
+.cache/
+*.tmp
+*.temp

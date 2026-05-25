@@ -1,0 +1,76 @@
+/* Monochrome highlight.js theme — pakai CSS variables agar selaras tema. */
+
+.hljs {
+  color: rgb(var(--c-primary));
+  background: transparent;
+}
+
+.hljs-comment,
+.hljs-quote,
+.hljs-meta {
+  color: rgb(var(--c-outline));
+  font-style: italic;
+}
+
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-section,
+.hljs-doctag,
+.hljs-name,
+.hljs-strong {
+  color: rgb(var(--c-on-surface));
+  font-weight: 500;
+}
+
+.hljs-string,
+.hljs-attr,
+.hljs-symbol,
+.hljs-bullet,
+.hljs-addition {
+  color: rgb(var(--c-secondary));
+}
+
+.hljs-number,
+.hljs-regexp,
+.hljs-literal,
+.hljs-link {
+  color: rgb(var(--c-tertiary-container));
+}
+
+.hljs-built_in,
+.hljs-builtin-name,
+.hljs-class .hljs-title,
+.hljs-title.class_,
+.hljs-type {
+  color: rgb(var(--c-secondary));
+}
+
+.hljs-function .hljs-title,
+.hljs-title.function_,
+.hljs-variable,
+.hljs-template-variable {
+  color: rgb(var(--c-on-surface));
+}
+
+.hljs-attribute,
+.hljs-property,
+.hljs-selector-class,
+.hljs-selector-id,
+.hljs-selector-attr,
+.hljs-selector-pseudo {
+  color: rgb(var(--c-on-surface-variant));
+}
+
+.hljs-deletion {
+  color: rgb(var(--c-error));
+}
+
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-tag,
+.hljs-punctuation,
+.hljs-operator {
+  color: rgb(var(--c-on-surface-variant));
+}
