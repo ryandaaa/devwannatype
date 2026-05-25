@@ -104,7 +104,7 @@ it is a small, monospace, dark-by-default workspace that opens in a second and s
     </td>
     <td align="center" width="50%">
       <b>nord</b><br><br>
-      <img src="https://github.com/user-attachments/assets/491329d8-a56a-4701-a7bc-b5310f87ad73" width="100%" />
+      <img width="1920" height="1080" alt="{F8326871-5ABB-40EE-B606-703A4A0AC370}" src="https://github.com/user-attachments/assets/73934dde-ed2d-4f12-a147-f0cdfb529755" />
     </td>
   </tr>
 </table>
