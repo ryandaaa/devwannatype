@@ -72,8 +72,42 @@ it is a small, monospace, dark-by-default workspace that opens in a second and s
 
 ## screenshots
 
-<img width="1920" height="1080" alt="{FE1AA776-B19B-4193-907C-E6B254DA6CF3}" src="https://github.com/user-attachments/assets/3a201fc6-83f8-40c3-9ccf-5bfc6e08af8c" />
+## Theme
 
+<table>
+  <tr>
+    <td align="center" width="50%">
+      <b>dark</b><br><br>
+      <img src="https://github.com/user-attachments/assets/3a201fc6-83f8-40c3-9ccf-5bfc6e08af8c" width="100%" />
+    </td>
+    <td align="center" width="50%">
+      <b>light</b><br><br>
+      <img src="https://github.com/user-attachments/assets/fb1528b5-e6c6-4543-80ec-b5803f88cede" width="100%" />
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center" width="50%">
+      <b>pink</b><br><br>
+      <img src="https://github.com/user-attachments/assets/9e2faa8c-4e3e-429f-9129-1adb45db23fc" width="100%" />
+    </td>
+    <td align="center" width="50%">
+      <b>rose-pine</b><br><br>
+      <img src="https://github.com/user-attachments/assets/6481e930-a106-43d6-8955-afcf87c4d6d8" width="100%" />
+    </td>
+  </tr>
+
+  <tr>
+    <td align="center" width="50%">
+      <b>solarized</b><br><br>
+      <img src="https://github.com/user-attachments/assets/486db473-3fd8-427f-b9f9-fa448b3d796d" width="100%" />
+    </td>
+    <td align="center" width="50%">
+      <b>nord</b><br><br>
+      <img src="https://github.com/user-attachments/assets/491329d8-a56a-4701-a7bc-b5310f87ad73" width="100%" />
+    </td>
+  </tr>
+</table>
 ## install
 
 ### download a release
