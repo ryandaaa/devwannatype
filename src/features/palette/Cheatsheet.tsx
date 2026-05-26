@@ -25,7 +25,6 @@ const SHORTCUTS: Array<{ section: string; items: Array<{ keys: string; label: st
     section: "layout",
     items: [
       { keys: "Ctrl+B", label: "toggle sidebar — overridden by bold inside markdown editor" },
-      { keys: "Ctrl+J", label: "toggle terminal panel" },
       { keys: "Ctrl+\\", label: "toggle markdown preview" },
       { keys: "F11", label: "zen mode" },
     ],

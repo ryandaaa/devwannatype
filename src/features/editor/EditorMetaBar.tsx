@@ -1,5 +1,5 @@
 import { Icon } from "../../components/Icon";
-import { useUpdateNoteMeta } from "../notes/hooks";
+import { useUpdateNoteMeta, useUpdateNoteSourcePath } from "../notes/hooks";
 import { TagEditor } from "../tags/TagEditor";
 import { SUPPORTED_LANGUAGES } from "./languages";
 import { detectLanguage } from "./detectLanguage";
@@ -15,6 +15,7 @@ interface EditorMetaBarProps {
   updatedAt: number;
   wordCount: number;
   lastExportPath: string | null;
+  sourcePath: string | null;
   liveContent: string;
 }
 
@@ -29,8 +30,9 @@ const TYPES: { value: NoteType; label: string; icon: string }[] = [
  * Visual: thin row 32px selaras header terminal.
  */
 export function EditorMetaBar(props: EditorMetaBarProps) {
-  const { noteId, type, language, tags, wordCount, lastExportPath, liveContent } = props;
+  const { noteId, type, language, tags, wordCount, lastExportPath, sourcePath, liveContent } = props;
   const updateMeta = useUpdateNoteMeta();
+  const updateSourcePath = useUpdateNoteSourcePath();
   const saveStatus = useLayoutStore((s) => s.saveStatus);
 
   function onTypeChange(v: string) {
@@ -87,6 +89,21 @@ export function EditorMetaBar(props: EditorMetaBarProps) {
       </div>
 
       <div className="flex items-center gap-md shrink-0">
+        {sourcePath && (
+          <button
+            type="button"
+            title={`Linked: ${sourcePath} (click to copy, right-click to unlink)`}
+            onClick={() => navigator.clipboard.writeText(sourcePath).catch(() => {})}
+            onContextMenu={(e) => {
+              e.preventDefault();
+              updateSourcePath.mutate({ id: noteId, path: null });
+            }}
+            className="flex items-center gap-xs font-code text-[10px] text-on-surface hover:text-primary transition-colors max-w-[260px]"
+          >
+            <Icon name="link" size={12} />
+            <span className="truncate">{sourcePath.split(/[\\/]/).pop() ?? sourcePath}</span>
+          </button>
+        )}
         <SaveStatusBadge status={saveStatus} />
         <span className="font-code text-[10px] text-on-surface-variant">
           {wordCount} {wordCount === 1 ? "word" : "words"}

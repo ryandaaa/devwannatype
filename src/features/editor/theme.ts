@@ -12,8 +12,8 @@ export const cmDarkTheme = EditorView.theme(
     },
     ".cm-scroller": {
       fontFamily: '"Geist Mono", ui-monospace, monospace',
-      fontSize: "13px",
-      lineHeight: "20px",
+      fontSize: "var(--cm-font-size, 13px)",
+      lineHeight: "1.55",
       letterSpacing: "0.01em",
     },
     ".cm-content": {

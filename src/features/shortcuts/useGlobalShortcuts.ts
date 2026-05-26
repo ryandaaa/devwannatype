@@ -10,7 +10,6 @@ import { useSaveBus } from "../editor/saveBus";
 /**
  * Global keyboard shortcuts — cross-OS (Cmd di mac, Ctrl di lainnya).
  * - Mod+B  → toggle sidebar          (overridden by bold inside markdown editor)
- * - Mod+J  → toggle terminal
  * - Mod+\\ → toggle preview
  * - Mod+N  → new note
  * - Mod+K  → command palette         (overridden by link inside markdown editor)
@@ -25,7 +24,6 @@ import { useSaveBus } from "../editor/saveBus";
  */
 export function useGlobalShortcuts() {
   const toggleSidebar = useLayoutStore((s) => s.toggleSidebar);
-  const toggleTerminal = useLayoutStore((s) => s.toggleTerminal);
   const togglePreview = useLayoutStore((s) => s.togglePreview);
   const setSelectedNoteId = useLayoutStore((s) => s.setSelectedNoteId);
   const setActiveView = useLayoutStore((s) => s.setActiveView);
@@ -44,7 +42,6 @@ export function useGlobalShortcuts() {
       if (t.tagName === "INPUT" || t.tagName === "TEXTAREA") return true;
       if (t.isContentEditable) return true;
       if (t.closest(".cm-content")) return true;
-      if (t.closest(".xterm")) return true;
       return false;
     }
 
@@ -58,6 +55,7 @@ export function useGlobalShortcuts() {
             type: "markdown",
             title: item.title,
             content: item.content,
+            sourcePath: item.sourcePath,
           });
           lastId = note.id;
         }
@@ -102,9 +100,6 @@ export function useGlobalShortcuts() {
         if (inEditableField(e.target)) return;
         e.preventDefault();
         toggleSidebar();
-      } else if (k === "j") {
-        e.preventDefault();
-        toggleTerminal();
       } else if (k === "\\") {
         e.preventDefault();
         togglePreview();
@@ -144,7 +139,6 @@ export function useGlobalShortcuts() {
     };
   }, [
     toggleSidebar,
-    toggleTerminal,
     togglePreview,
     create,
     createNote,

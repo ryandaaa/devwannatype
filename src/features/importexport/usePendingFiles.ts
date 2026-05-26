@@ -36,6 +36,7 @@ export function usePendingFiles() {
               type: isMd ? "markdown" : "snippet",
               title,
               content,
+              sourcePath: p,
             });
             lastId = note.id;
           } catch (e) {

@@ -5,7 +5,7 @@ import {
   useRef,
 } from "react";
 import { EditorState, Compartment } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers, highlightActiveLine } from "@codemirror/view";import { defaultKeymap, history, historyKeymap } from "@codemirror/commands";
+import { EditorView, keymap, lineNumbers, highlightActiveLine } from "@codemirror/view";import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
 import { searchKeymap, highlightSelectionMatches } from "@codemirror/search";
 import { bracketMatching, indentOnInput } from "@codemirror/language";
 import { autocompletion, closeBrackets, closeBracketsKeymap } from "@codemirror/autocomplete";
@@ -13,6 +13,7 @@ import { cmDarkTheme } from "./theme";
 import { cmHighlightExt } from "./highlight";
 import { languageExtension } from "./languages";
 import { wordStyleKeymap } from "./wordShortcuts";
+import { useSettingsStore } from "../settings/store";
 import type { NoteType } from "../../db/schema";
 
 export interface CodeMirrorEditorHandle {
@@ -52,6 +53,7 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorHandle, CodeMirrorEdi
     const onSaveRef = useRef(onSaveShortcut);
     const langCompartment = useRef(new Compartment());
     const lineNumCompartment = useRef(new Compartment());
+    const editorFontSize = useSettingsStore((s) => s.editorFontSize);
 
     useEffect(() => {
       onChangeRef.current = onChange;
@@ -59,6 +61,30 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorHandle, CodeMirrorEdi
     useEffect(() => {
       onSaveRef.current = onSaveShortcut;
     }, [onSaveShortcut]);
+
+    // Apply font size as CSS var on the host so theme picks it up via var(--cm-font-size).
+    useEffect(() => {
+      const el = containerRef.current;
+      if (!el) return;
+      el.style.setProperty("--cm-font-size", `${editorFontSize}px`);
+    }, [editorFontSize]);
+
+    // Ctrl+wheel and pinch-to-zoom (touchpad pinch emits wheel with ctrlKey on most OS).
+    useEffect(() => {
+      const el = containerRef.current;
+      if (!el) return;
+      const onWheel = (e: WheelEvent) => {
+        if (!e.ctrlKey) return;
+        e.preventDefault();
+        // Negative deltaY = wheel up / pinch out → zoom in.
+        // Use small step for smooth pinch, larger for discrete wheel.
+        const step = Math.abs(e.deltaY) > 30 ? 1 : 0.5;
+        const dir = e.deltaY < 0 ? 1 : -1;
+        useSettingsStore.getState().bumpEditorFontSize(dir * step);
+      };
+      el.addEventListener("wheel", onWheel, { passive: false });
+      return () => el.removeEventListener("wheel", onWheel);
+    }, []);
 
     useImperativeHandle(
       ref,
@@ -123,8 +149,41 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorHandle, CodeMirrorEdi
                   return true;
                 },
               },
+              {
+                key: "Mod-=",
+                preventDefault: true,
+                run: () => {
+                  useSettingsStore.getState().bumpEditorFontSize(1);
+                  return true;
+                },
+              },
+              {
+                key: "Mod-+",
+                preventDefault: true,
+                run: () => {
+                  useSettingsStore.getState().bumpEditorFontSize(1);
+                  return true;
+                },
+              },
+              {
+                key: "Mod--",
+                preventDefault: true,
+                run: () => {
+                  useSettingsStore.getState().bumpEditorFontSize(-1);
+                  return true;
+                },
+              },
+              {
+                key: "Mod-0",
+                preventDefault: true,
+                run: () => {
+                  useSettingsStore.getState().resetEditorFontSize();
+                  return true;
+                },
+              },
               ...mdKeymap,
               ...closeBracketsKeymap,
+              indentWithTab,
               ...defaultKeymap,
               ...historyKeymap,
               ...searchKeymap,
@@ -143,6 +202,14 @@ export const CodeMirrorEditor = forwardRef<CodeMirrorEditorHandle, CodeMirrorEdi
         parent: containerRef.current,
       });
       viewRef.current = view;
+      // Auto-focus on mount so user can start typing immediately —
+      // also fires every time noteId changes (switching notes).
+      // Use rAF to wait for layout/paint, then place cursor at end of doc
+      // so existing content stays scrolled to top but typing appends naturally.
+      requestAnimationFrame(() => {
+        if (viewRef.current !== view) return; // unmounted before frame
+        view.focus();
+      });
       return () => {
         view.destroy();
         viewRef.current = null;

@@ -64,21 +64,21 @@ export async function exportNoteToFile(note: NoteWithTags): Promise<string | nul
 
 /** Import 1+ file markdown sebagai note baru. Return jumlah file ter-import + last id. */
 export async function importMarkdownFiles(): Promise<
-  Array<{ title: string; content: string }>
+  Array<{ title: string; content: string; sourcePath: string }>
 > {
   const result = await open({
     multiple: true,
-    filters: [{ name: "Markdown", extensions: ["md", "markdown"] }],
+    filters: [{ name: "Text & Markdown", extensions: ["md", "markdown", "txt"] }],
   });
   if (!result) return [];
   const paths = Array.isArray(result) ? result : [result];
-  const out: Array<{ title: string; content: string }> = [];
+  const out: Array<{ title: string; content: string; sourcePath: string }> = [];
   for (const p of paths) {
     try {
       const content = await readTextFile(p);
       const filename = p.split(/[\\/]/).pop() ?? "imported.md";
-      const title = filename.replace(/\.(md|markdown)$/i, "");
-      out.push({ title, content });
+      const title = filename.replace(/\.(md|markdown|txt)$/i, "");
+      out.push({ title, content, sourcePath: p });
     } catch (e) {
       console.error("[import] failed:", p, e);
     }

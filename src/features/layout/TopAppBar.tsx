@@ -10,7 +10,6 @@ import { useOverlayStore } from "../palette/overlayStore";
 export function TopAppBar() {
   const create = useCreateAndSelectNote();
   const createNote = useCreateNote();
-  const toggleTerminal = useLayoutStore((s) => s.toggleTerminal);
   const toggleSidebar = useLayoutStore((s) => s.toggleSidebar);
   const showSidebar = useLayoutStore((s) => s.showSidebar);
   const setSelectedNoteId = useLayoutStore((s) => s.setSelectedNoteId);
@@ -29,6 +28,7 @@ export function TopAppBar() {
           type: "markdown",
           title: item.title,
           content: item.content,
+          sourcePath: item.sourcePath,
         });
         lastId = note.id;
       }
@@ -82,7 +82,6 @@ export function TopAppBar() {
 
           <div className="flex items-center border-l border-surface-container-high pl-sm ml-xs gap-xs">
             <IconButton icon="upload_file" label="Import .md" onClick={onImport} />
-            <IconButton icon="terminal" label="Toggle terminal" onClick={toggleTerminal} />
             <IconButton
               icon="help_outline"
               label="Keyboard shortcuts (?)"

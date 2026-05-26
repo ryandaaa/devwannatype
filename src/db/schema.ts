@@ -12,6 +12,7 @@ export interface NoteRow {
   is_archived: number; // 0 | 1
   deleted_at: number | null;
   last_export_path: string | null;
+  source_path: string | null;
   created_at: number;
   updated_at: number;
 }

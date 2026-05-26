@@ -9,7 +9,6 @@ export interface MarkdownPreviewProps {
   source: string;
   onWikiNavigate?: (title: string) => void;
   onTaskToggle?: (occurrence: number, checked: boolean) => void;
-  onRunSnippet?: (lang: string, code: string) => void;
 }
 
 /**
@@ -62,7 +61,6 @@ export function MarkdownPreview({
   source,
   onWikiNavigate,
   onTaskToggle,
-  onRunSnippet,
 }: MarkdownPreviewProps) {
   const processed = useMemo(() => preprocessWikiLinks(source), [source]);
   // Counter untuk track urutan checkbox saat render
@@ -245,7 +243,6 @@ export function MarkdownPreview({
                   className={className}
                   text={text}
                   rest={rest}
-                  onRun={onRunSnippet}
                 />
               );
             },
@@ -297,17 +294,13 @@ function CodeBlock({
   className,
   text,
   rest,
-  onRun,
 }: {
   lang: string | undefined;
   className: string | undefined;
   text: string;
   rest: object;
-  onRun?: (lang: string, code: string) => void;
 }) {
   const [copied, setCopied] = useState(false);
-  const runnable =
-    !!onRun && !!lang && /^(bash|sh|shell|zsh|fish|powershell|cmd)$/i.test(lang);
   return (
     <div className="my-lg border border-surface-container-high bg-surface-container-lowest rounded-none overflow-hidden">
       <div className="flex items-center justify-between px-md py-sm border-b border-surface-container-high bg-surface-container-low">
@@ -315,17 +308,6 @@ function CodeBlock({
           {lang ?? "text"}
         </span>
         <div className="flex items-center gap-sm">
-          {runnable && (
-            <button
-              type="button"
-              aria-label="Run in terminal"
-              title="Run in terminal"
-              onClick={() => onRun?.(lang ?? "bash", text)}
-              className="text-on-surface-variant hover:text-on-surface flex items-center gap-xs"
-            >
-              <Icon name="play_arrow" size={14} />
-            </button>
-          )}
           <button
             type="button"
             aria-label="Copy code"

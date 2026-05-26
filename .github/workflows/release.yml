@@ -45,14 +45,20 @@ jobs:
         if: matrix.platform == 'ubuntu-22.04'
         run: |
           sudo apt-get update
-          sudo apt-get install -y \
+          sudo apt-get install -y --no-install-recommends \
+            build-essential \
+            curl \
+            wget \
+            file \
+            pkg-config \
             libwebkit2gtk-4.1-dev \
-            libappindicator3-dev \
+            libsoup-3.0-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
             librsvg2-dev \
-            patchelf \
-            libxdo-dev \
             libssl-dev \
-            file
+            libxdo-dev \
+            patchelf
 
       - name: install frontend deps
         run: bun install
@@ -68,16 +74,23 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: "devwannatype ${{ github.ref_name }}"
           releaseBody: |
-            see [Release notes](https://github.com/ryandaaa/devwannatype/blob/${{ github.ref_name }}/installers/RELEASE_NOTES_v1.0.0.md) for full details.
+            cross-platform desktop builds for **${{ github.ref_name }}**.
 
-            **Windows users**: installer is not code-signed.
-            click `More info → Run anyway` on SmartScreen prompt.
-            verify SHA256 in release notes.
+            **Windows**: pick the `.msi` (MSI installer) or `.exe` (NSIS setup).
+            installer is not code-signed — Windows SmartScreen will warn on first run.
+            click `More info → Run anyway` to proceed.
 
-            **macOS users**: app is not signed/notarized.
-            right-click the .app → `Open` → confirm to bypass Gatekeeper on first run.
+            **macOS**: pick the `.dmg` (universal binary, Intel + Apple Silicon).
+            app is not notarized — right-click the .app → `Open` → `Open` to bypass
+            Gatekeeper on first run.
 
-            **Linux users**: pick `.deb` (Debian/Ubuntu), `.rpm` (Fedora/RHEL), or `.AppImage` (universal).
+            **Linux**: pick `.deb` (Debian/Ubuntu), `.rpm` (Fedora/RHEL), or
+            `.AppImage` (universal portable). For AppImage, `chmod +x` then run.
+
+            data folder per OS:
+            - Windows: `%APPDATA%\dev.wannatype.app\devwannatype.db`
+            - macOS:   `~/Library/Application Support/dev.wannatype.app/devwannatype.db`
+            - Linux:   `~/.local/share/dev.wannatype.app/devwannatype.db`
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}

@@ -2,7 +2,6 @@ import { TopAppBar } from "../features/layout/TopAppBar";
 import { SideNavBar } from "../features/nav/SideNavBar";
 import { NoteList } from "../features/notes/NoteList";
 import { EditorArea } from "../features/editor/EditorArea";
-import { TerminalPanel } from "../features/terminal/TerminalPanel";
 import { ResizeHandle } from "../features/layout/ResizeHandle";
 import { CommandPalette } from "../features/palette/CommandPalette";
 import { Cheatsheet } from "../features/palette/Cheatsheet";
@@ -10,6 +9,7 @@ import { SettingsModal } from "../features/settings/SettingsModal";
 import { ErrorBoundary } from "../components/ErrorBoundary";
 import { ToastViewport } from "../components/toast/ToastViewport";
 import { ConfirmDialog } from "../components/confirm/ConfirmDialog";
+import { GlobalContextMenu } from "../components/GlobalContextMenu";
 import { AppProviders } from "./providers";
 import { useLayoutStore } from "../features/layout/store";
 import { useGlobalShortcuts } from "../features/shortcuts/useGlobalShortcuts";
@@ -35,13 +35,10 @@ function Shell() {
   usePendingFiles();
 
   const showSidebar = useLayoutStore((s) => s.showSidebar);
-  const showTerminal = useLayoutStore((s) => s.showTerminal);
   const sidebarW = useLayoutStore((s) => s.sidebarW);
   const noteListW = useLayoutStore((s) => s.noteListW);
-  const terminalH = useLayoutStore((s) => s.terminalH);
   const setSidebarW = useLayoutStore((s) => s.setSidebarW);
   const setNoteListW = useLayoutStore((s) => s.setNoteListW);
-  const setTerminalH = useLayoutStore((s) => s.setTerminalH);
   const zen = useLayoutStore((s) => s.zen);
   const toggleZen = useLayoutStore((s) => s.toggleZen);
 
@@ -56,12 +53,7 @@ function Shell() {
   const effectiveSidebarW = sidebarCollapsed ? COLLAPSED_SIDEBAR_W : sidebarW;
 
   if (zen) {
-    return (
-      <ZenShell
-        terminalShown={false}
-        onExit={toggleZen}
-      />
-    );
+    return <ZenShell onExit={toggleZen} />;
   }
 
   return (
@@ -87,14 +79,7 @@ function Shell() {
           onChange={setNoteListW}
         />
         <section className="flex-1 bg-background flex flex-col relative overflow-hidden min-w-0">
-          <EditorArea bottomPad={showTerminal ? terminalH : 0} />
-          {showTerminal && (
-            <TerminalPanel
-              height={terminalH}
-              onResizeStart={setTerminalH}
-              currentHeight={terminalH}
-            />
-          )}
+          <EditorArea bottomPad={0} />
         </section>
 
         {drop.hovering && (
@@ -110,12 +95,13 @@ function Shell() {
       <Cheatsheet open={cheatsheetOpen} onClose={() => setCheatsheetOpen(false)} />
       <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <ConfirmDialog />
+      <GlobalContextMenu />
       <ToastViewport />
     </>
   );
 }
 
-function ZenShell({ onExit }: { terminalShown: boolean; onExit: () => void }) {
+function ZenShell({ onExit }: { onExit: () => void }) {
   return (
     <div className="flex-1 flex flex-col relative overflow-hidden bg-background">
       <EditorArea bottomPad={0} />

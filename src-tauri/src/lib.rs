@@ -1,6 +1,3 @@
-mod git;
-mod pty;
-
 use std::sync::Mutex;
 
 use tauri::{Emitter, Manager, State};
@@ -36,12 +33,20 @@ pub fn run() {
     let initial_args: Vec<String> = std::env::args().collect();
     let initial_files = collect_file_args(&initial_args);
 
-    let migrations = vec![Migration {
-        version: 1,
-        description: "create initial schema",
-        sql: include_str!("../migrations/0001_init.sql"),
-        kind: MigrationKind::Up,
-    }];
+    let migrations = vec![
+        Migration {
+            version: 1,
+            description: "create initial schema",
+            sql: include_str!("../migrations/0001_init.sql"),
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 2,
+            description: "add source_path to notes",
+            sql: include_str!("../migrations/0002_source_path.sql"),
+            kind: MigrationKind::Up,
+        },
+    ];
 
     let mut builder = tauri::Builder::default()
         .manage(PendingFiles(Mutex::new(initial_files)))
@@ -56,11 +61,6 @@ pub fn run() {
                 .build(),
         )
         .invoke_handler(tauri::generate_handler![
-            pty::pty_spawn,
-            pty::pty_write,
-            pty::pty_resize,
-            pty::pty_kill,
-            git::git_current_branch,
             take_pending_files,
         ]);
 
@@ -90,9 +90,5 @@ pub fn run() {
     builder
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
-        .run(|_app, event| {
-            if let tauri::RunEvent::ExitRequested { .. } = event {
-                pty::kill_all_sessions();
-            }
-        });
+        .run(|_app, _event| {});
 }
