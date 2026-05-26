@@ -31,7 +31,6 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
   const setActiveView = useLayoutStore((s) => s.setActiveView);
   const setSelectedNoteId = useLayoutStore((s) => s.setSelectedNoteId);
   const toggleSidebar = useLayoutStore((s) => s.toggleSidebar);
-  const toggleTerminal = useLayoutStore((s) => s.toggleTerminal);
   const togglePreview = useLayoutStore((s) => s.togglePreview);
   const create = useCreateAndSelectNote();
   const createNote = useCreateNote();
@@ -99,6 +98,7 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
               type: "markdown",
               title: item.title,
               content: item.content,
+              sourcePath: item.sourcePath,
             });
             lastId = note.id;
           }
@@ -116,17 +116,6 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
         hint: "Ctrl+B",
         onSelect: () => {
           toggleSidebar();
-          onClose();
-        },
-      },
-      {
-        id: "cmd:toggle-terminal",
-        kind: "command",
-        icon: "terminal",
-        label: "Toggle terminal",
-        hint: "Ctrl+J",
-        onSelect: () => {
-          toggleTerminal();
           onClose();
         },
       },
@@ -205,7 +194,6 @@ export function CommandPalette({ open, onClose }: CommandPaletteProps) {
     setActiveView,
     setSelectedNoteId,
     toggleSidebar,
-    toggleTerminal,
     togglePreview,
     onClose,
   ]);

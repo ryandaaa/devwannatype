@@ -6,10 +6,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { invoke } from "@tauri-apps/api/core";
 import { Icon } from "../../components/Icon";
 import { useLayoutStore } from "../layout/store";
 import { useSettingsStore } from "../settings/store";
+import { writeTextFile } from "@tauri-apps/plugin-fs";
 import {
   useNote,
   useNotes,
@@ -18,6 +18,7 @@ import {
   useUpdateLastExportPath,
   type NoteWithTags,
 } from "../notes/hooks";
+import { useCreateAndSelectNote } from "../notes/useCreateAndSelectNote";
 import { CodeMirrorEditor, type CodeMirrorEditorHandle } from "./CodeMirrorEditor";
 import { MarkdownPreview } from "../preview/MarkdownPreview";
 import { OutlinePanel, parseHeadings } from "../preview/OutlinePanel";
@@ -26,7 +27,6 @@ import { FormatBar } from "./FormatBar";
 import { exportNoteToFile } from "../importexport";
 import { useImagePaste } from "../importexport/useImagePaste";
 import { useSaveBus } from "./saveBus";
-import { useTerminalStore } from "../terminal/store";
 import { toast } from "../../components/toast/toastStore";
 import { debounce } from "../../lib/debounce";
 import type { NoteType } from "../../db/schema";
@@ -43,6 +43,7 @@ export function EditorArea({ bottomPad }: { bottomPad: number }) {
   const setActiveView = useLayoutStore((s) => s.setActiveView);
   const setSaveStatus = useLayoutStore((s) => s.setSaveStatus);
   const showPreview = useLayoutStore((s) => s.showPreview);
+  const showOutline = useLayoutStore((s) => s.showOutline);
 
   const { data: note, isLoading } = useNote(selectedNoteId);
   const { data: inboxNotes = [] } = useNotes("inbox");
@@ -59,6 +60,10 @@ export function EditorArea({ bottomPad }: { bottomPad: number }) {
   const [liveDoc, setLiveDoc] = useState<string>("");
 
   const flushRef = useRef<{ flush: () => void }>({ flush: () => {} });
+  const sourcePathRef = useRef<string | null>(null);
+  useEffect(() => {
+    sourcePathRef.current = note?.source_path ?? null;
+  }, [note?.source_path]);
   const debouncedRef = useRef<
     | (((id: string, content: string) => void) & { flush: () => void; cancel: () => void })
     | null
@@ -111,6 +116,19 @@ export function EditorArea({ bottomPad }: { bottomPad: number }) {
         //    autosave sudah expired tapi belum match.
         if (contentRef.current !== lastSavedRef.current) {
           persist(selectedNoteId, contentRef.current);
+        }
+        // 3. Kalau note linked ke file di disk → tulis isi ke sana juga.
+        const sp = sourcePathRef.current;
+        if (sp) {
+          const body = contentRef.current;
+          writeTextFile(sp, body)
+            .then(() => {
+              toast.success("saved to file", sp);
+            })
+            .catch((e) => {
+              console.error("[save-to-file] failed:", e);
+              toast.error("Save to file failed", String(e));
+            });
         }
       },
     };
@@ -245,18 +263,6 @@ export function EditorArea({ bottomPad }: { bottomPad: number }) {
     view.replaceDoc(next);
   }, []);
 
-  // Run snippet di terminal — pakai pty session yang aktif (di store)
-  const onRunSnippet = useCallback((_lang: string, code: string) => {
-    const id = useTerminalStore.getState().sessionId;
-    if (!id) {
-      console.warn("[run] no terminal session — opening terminal panel first");
-      useLayoutStore.getState().setShowTerminal(true);
-      return;
-    }
-    const data = code.endsWith("\n") ? code : code + "\n";
-    void invoke("pty_write", { id, data }).catch((e) => console.error("[run] failed:", e));
-  }, []);
-
   // ALL hooks must run before any early return. Compute deferred + memo + state
   // di sini supaya hooks order konsisten.
   const isMarkdown = note?.type === "markdown";
@@ -312,6 +318,7 @@ export function EditorArea({ bottomPad }: { bottomPad: number }) {
         updatedAt={note.updated_at}
         wordCount={wordCount}
         lastExportPath={note.last_export_path}
+        sourcePath={note.source_path}
         liveContent={liveDoc || note.content}
       />
       {isMarkdown && !showSplit && <FormatBar editorRef={editorRef} />}
@@ -341,7 +348,7 @@ export function EditorArea({ bottomPad }: { bottomPad: number }) {
             </div>
           </div>
           {/* Outline rail — juga ditampilkan di editor mode untuk markdown panjang */}
-          {hasOutline && <OutlinePanel source={deferredDoc} onJump={onOutlineJump} />}
+          {hasOutline && showOutline && <OutlinePanel source={deferredDoc} onJump={onOutlineJump} />}
         </div>
 
         {/* Preview overlay — fade in saat aktif, unmount setelah fade-out untuk
@@ -357,10 +364,9 @@ export function EditorArea({ bottomPad }: { bottomPad: number }) {
                 source={deferredDoc}
                 onWikiNavigate={onWikiNavigate}
                 onTaskToggle={onTaskToggle}
-                onRunSnippet={onRunSnippet}
               />
             </div>
-            {hasOutline && <OutlinePanel source={deferredDoc} onJump={onOutlineJump} />}
+            {hasOutline && showOutline && <OutlinePanel source={deferredDoc} onJump={onOutlineJump} />}
           </div>
         )}
       </div>
@@ -404,7 +410,13 @@ function EditorHeader({
   const updateExportPath = useUpdateLastExportPath();
   const showPreview = useLayoutStore((s) => s.showPreview);
   const togglePreview = useLayoutStore((s) => s.togglePreview);
+  const showOutline = useLayoutStore((s) => s.showOutline);
+  const toggleOutline = useLayoutStore((s) => s.toggleOutline);
   const isMarkdown = note?.type === "markdown";
+  const hasOutlineNow = useMemo(
+    () => isMarkdown && parseHeadings(liveContent || "").length >= 2,
+    [isMarkdown, liveContent],
+  );
   const [copied, setCopied] = useState(false);
 
   async function onExport() {
@@ -440,6 +452,22 @@ function EditorHeader({
         </span>
       </div>
       <div className="flex items-center gap-md shrink-0">
+        {hasOutlineNow && (
+          <button
+            type="button"
+            aria-label={showOutline ? "Hide outline" : "Show outline"}
+            onClick={toggleOutline}
+            className={`flex items-center gap-xs transition-colors font-code text-body-sm ${
+              showOutline
+                ? "text-on-surface"
+                : "text-on-surface-variant hover:text-on-surface"
+            }`}
+            title="Toggle outline panel"
+          >
+            <Icon name="format_list_bulleted" size={16} />
+            <span>outline</span>
+          </button>
+        )}
         {isMarkdown && (
           <button
             type="button"
@@ -511,19 +539,34 @@ function TitleInput({ noteId, initialTitle }: { noteId: string; initialTitle: st
 }
 
 function EmptyEditor({ bottomPad }: { bottomPad: number }) {
+  const create = useCreateAndSelectNote();
+  const firedRef = useRef(false);
+
+  useEffect(() => {
+    if (firedRef.current) return;
+    firedRef.current = true;
+    void create.mutateAsync().catch((e) => {
+      // If create fails, allow retry on next mount
+      firedRef.current = false;
+      console.error("[empty] auto-create failed:", e);
+    });
+    // create is stable enough; we only want to fire once per mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <>
       <div className="h-[48px] px-lg border-b border-surface-container-high flex items-center shrink-0">
         <span className="font-code text-body-sm text-on-surface-variant opacity-60">
-          no note selected
+          new note
         </span>
       </div>
       <div
         className="flex-1 overflow-hidden flex items-center justify-center"
         style={{ paddingBottom: `${bottomPad}px` }}
       >
-        <div className="font-code text-body-sm text-on-surface-variant opacity-60">
-          press Ctrl+N to create a new note
+        <div className="font-code text-body-sm text-on-surface-variant opacity-40">
+          creating…
         </div>
       </div>
     </>

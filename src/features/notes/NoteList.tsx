@@ -16,11 +16,14 @@ import {
   useBulkSoftDelete,
   useBulkRestore,
   useBulkPermanentDelete,
+  useUpdateNoteSourcePath,
   type NoteWithTags,
 } from "./hooks";
 import { useCreateAndSelectNote } from "./useCreateAndSelectNote";
 import { relativeTime } from "../../lib/date";
 import { isMod } from "../../lib/debounce";
+import { save as saveDialog } from "@tauri-apps/plugin-dialog";
+import { writeTextFile } from "@tauri-apps/plugin-fs";
 import type { ViewId } from "../../db/schema";
 
 const VIEW_LABELS: Record<string, string> = {
@@ -44,6 +47,7 @@ export function NoteList({ width }: { width: number }) {
   const lastClickIdRef = useRef<string | null>(null);
 
   const togglePin = useTogglePin();
+  const updateSourcePath = useUpdateNoteSourcePath();
   const toggleArchive = useToggleArchive();
   const softDelete = useSoftDelete();
   const restore = useRestoreFromTrash();
@@ -194,6 +198,24 @@ export function NoteList({ width }: { width: number }) {
         },
         { separator: true, label: "" },
         {
+          label: note.source_path ? "Save to file" : "Save to file…",
+          icon: "save",
+          onClick: () => void saveNoteToFile(note),
+        },
+        ...(note.source_path
+          ? [
+              {
+                label: "Unlink file",
+                icon: "link_off",
+                onClick: () => {
+                  updateSourcePath.mutate({ id: note.id, path: null });
+                  toast.success("file unlinked");
+                },
+              },
+            ]
+          : []),
+        { separator: true, label: "" },
+        {
           label: "Move to Trash",
           icon: "delete",
           danger: true,
@@ -204,6 +226,39 @@ export function NoteList({ width }: { width: number }) {
         },
       ],
     });
+  }
+
+  async function saveNoteToFile(note: NoteWithTags) {
+    let path = note.source_path;
+    if (!path) {
+      // Pilih path baru via dialog
+      const ext =
+        note.type === "markdown" ? "md" : note.type === "command" ? "sh" : "txt";
+      const slug =
+        (note.title || "untitled")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-+|-+$/g, "")
+          .slice(0, 60) || "untitled";
+      const chosen = await saveDialog({
+        defaultPath: `${slug}.${ext}`,
+        filters: [
+          { name: "Text & Markdown", extensions: ["md", "markdown", "txt", "sh"] },
+          { name: "All files", extensions: ["*"] },
+        ],
+      });
+      if (!chosen) return;
+      path = chosen;
+      // Link note → file
+      updateSourcePath.mutate({ id: note.id, path });
+    }
+    try {
+      await writeTextFile(path, note.content);
+      toast.success("saved to file", path);
+    } catch (e) {
+      console.error("[save-to-file] failed:", e);
+      toast.error("Save to file failed", String(e));
+    }
   }
 
   // Bulk actions

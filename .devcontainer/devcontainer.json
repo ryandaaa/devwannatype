@@ -1,0 +1,28 @@
+{
+  "name": "devwannatype (Tauri + Xpra)",
+  "image": "mcr.microsoft.com/devcontainers/base:ubuntu-24.04",
+  "features": {
+    "ghcr.io/devcontainers/features/rust:1": {
+      "profile": "minimal",
+      "version": "stable"
+    }
+  },
+  "postCreateCommand": "bash .devcontainer/post-create.sh",
+  "forwardPorts": [1420, 14500],
+  "portsAttributes": {
+    "1420": {
+      "label": "Vite (frontend-only)",
+      "onAutoForward": "silent"
+    },
+    "14500": {
+      "label": "Xpra HTML5 (Tauri window)",
+      "onAutoForward": "openBrowser"
+    }
+  },
+  "remoteUser": "vscode",
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
+  }
+}

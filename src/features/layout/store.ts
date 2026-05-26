@@ -10,12 +10,11 @@ export interface LayoutState {
   // Panel sizes (px)
   sidebarW: number;
   noteListW: number;
-  terminalH: number;
 
   // Panel visibility
   showSidebar: boolean;
-  showTerminal: boolean;
   showPreview: boolean;
+  showOutline: boolean;
 
   // Navigation state
   activeView: ViewId;
@@ -33,13 +32,12 @@ export interface LayoutState {
   // Actions
   setSidebarW: (n: number) => void;
   setNoteListW: (n: number) => void;
-  setTerminalH: (n: number) => void;
   setShowSidebar: (v: boolean) => void;
-  setShowTerminal: (v: boolean) => void;
   setShowPreview: (v: boolean) => void;
+  setShowOutline: (v: boolean) => void;
   toggleSidebar: () => void;
-  toggleTerminal: () => void;
   togglePreview: () => void;
+  toggleOutline: () => void;
   setActiveView: (v: ViewId) => void;
   setSelectedNoteId: (id: string | null) => void;
 
@@ -49,10 +47,9 @@ export interface LayoutState {
 const DEFAULTS = {
   sidebarW: 240,
   noteListW: 280,
-  terminalH: 180,
   showSidebar: true,
-  showTerminal: true,
   showPreview: false,
+  showOutline: false,
   activeView: "inbox" as ViewId,
   selectedNoteId: null as string | null,
   saveStatus: "saved" as "saved" | "saving" | "dirty",
@@ -62,10 +59,9 @@ const DEFAULTS = {
 const SETTING_KEYS = {
   sidebarW: "layout.sidebar_w",
   noteListW: "layout.notelist_w",
-  terminalH: "layout.terminal_h",
   showSidebar: "layout.show_sidebar",
-  showTerminal: "layout.show_terminal",
   showPreview: "layout.show_preview",
+  showOutline: "layout.show_outline",
   activeView: "nav.active_view",
   selectedNoteId: "nav.selected_note_id",
 } as const;
@@ -97,25 +93,21 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
     set({ noteListW: n });
     persistDebounced(SETTING_KEYS.noteListW, String(n));
   },
-  setTerminalH: (n) => {
-    set({ terminalH: n });
-    persistDebounced(SETTING_KEYS.terminalH, String(n));
-  },
   setShowSidebar: (v) => {
     set({ showSidebar: v });
     persistDebounced(SETTING_KEYS.showSidebar, v ? "1" : "0");
-  },
-  setShowTerminal: (v) => {
-    set({ showTerminal: v });
-    persistDebounced(SETTING_KEYS.showTerminal, v ? "1" : "0");
   },
   setShowPreview: (v) => {
     set({ showPreview: v });
     persistDebounced(SETTING_KEYS.showPreview, v ? "1" : "0");
   },
+  setShowOutline: (v) => {
+    set({ showOutline: v });
+    persistDebounced(SETTING_KEYS.showOutline, v ? "1" : "0");
+  },
   toggleSidebar: () => get().setShowSidebar(!get().showSidebar),
-  toggleTerminal: () => get().setShowTerminal(!get().showTerminal),
   togglePreview: () => get().setShowPreview(!get().showPreview),
+  toggleOutline: () => get().setShowOutline(!get().showOutline),
   setActiveView: (v) => {
     set({ activeView: v });
     persistDebounced(SETTING_KEYS.activeView, v);
@@ -160,10 +152,9 @@ export const useLayoutStore = create<LayoutState>((set, get) => ({
         hydrated: true,
         sidebarW: num(SETTING_KEYS.sidebarW, DEFAULTS.sidebarW),
         noteListW: num(SETTING_KEYS.noteListW, DEFAULTS.noteListW),
-        terminalH: num(SETTING_KEYS.terminalH, DEFAULTS.terminalH),
         showSidebar: bool(SETTING_KEYS.showSidebar, DEFAULTS.showSidebar),
-        showTerminal: bool(SETTING_KEYS.showTerminal, DEFAULTS.showTerminal),
         showPreview: bool(SETTING_KEYS.showPreview, DEFAULTS.showPreview),
+        showOutline: bool(SETTING_KEYS.showOutline, DEFAULTS.showOutline),
         activeView: str(SETTING_KEYS.activeView, DEFAULTS.activeView, validViews),
         selectedNoteId: map.get(SETTING_KEYS.selectedNoteId) || null,
       });

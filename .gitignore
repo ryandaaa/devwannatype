@@ -54,3 +54,8 @@ ehthumbs.db
 .cache/
 *.tmp
 *.temp
+
+# Codespaces / Xpra runtime
+tauri-dev.log
+.xpra/
+.xdg-runtime/

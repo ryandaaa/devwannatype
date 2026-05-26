@@ -17,7 +17,6 @@ nothing leaves your machine unless you export.
 - **Ctrl+S**  — flush save (autosave runs every 400ms)
 - **Ctrl+F**  — find in note
 - **Ctrl+B**  — toggle sidebar (collapse to icon rail)
-- **Ctrl+J**  — toggle terminal panel
 - **Ctrl+\\\\** — toggle markdown preview
 - **Ctrl+K**  — command palette (search notes & run commands)
 - **F11**     — zen mode (editor only)
@@ -65,8 +64,7 @@ in markdown preview, checkboxes (\`- [ ]\` and \`- [x]\`) are clickable —
 toggling updates the source.
 
 \`\`\`bash
-# bash / sh / zsh code blocks have a "run" button in preview
-# clicking sends the snippet to the local terminal panel.
+# code blocks have a copy button in preview
 echo "hello from devwannatype"
 \`\`\`
 
@@ -86,15 +84,6 @@ echo "hello from devwannatype"
 paste an image from your clipboard (Ctrl+V) while a markdown note is active —
 it gets saved into \`app_data_dir/images/\` and inserted as a markdown image
 link.
-
-## terminal
-
-the bottom panel hosts a real local shell. it tracks the git branch of its
-working directory and shows it as a chip on the right.
-
-\`\`\`bash
-git status
-\`\`\`
 
 ## themes
 

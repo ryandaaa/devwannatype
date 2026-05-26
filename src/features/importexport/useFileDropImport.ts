@@ -50,6 +50,7 @@ export function useFileDropImport() {
               title,
               content,
               language: isMd ? null : detectLanguage(content),
+              sourcePath: p,
             });
             lastId = note.id;
             count++;

@@ -64,6 +64,7 @@ interface CreateNoteInput {
   language?: string | null;
   title?: string;
   content?: string;
+  sourcePath?: string | null;
 }
 
 export function useCreateNote() {
@@ -83,13 +84,14 @@ export function useCreateNote() {
         is_archived: 0,
         deleted_at: null,
         last_export_path: null,
+        source_path: input.sourcePath ?? null,
         created_at: ts,
         updated_at: ts,
       };
       await db.execute(
-        `INSERT INTO notes (id, title, type, language, content, is_pinned, is_archived, deleted_at, last_export_path, created_at, updated_at)
-         VALUES (?, ?, ?, ?, ?, 0, 0, NULL, NULL, ?, ?)`,
-        [note.id, note.title, note.type, note.language, note.content, note.created_at, note.updated_at],
+        `INSERT INTO notes (id, title, type, language, content, is_pinned, is_archived, deleted_at, last_export_path, source_path, created_at, updated_at)
+         VALUES (?, ?, ?, ?, ?, 0, 0, NULL, NULL, ?, ?, ?)`,
+        [note.id, note.title, note.type, note.language, note.content, note.source_path, note.created_at, note.updated_at],
       );
       return note;
     },
@@ -330,6 +332,23 @@ export function useUpdateLastExportPath() {
     },
     onSuccess: (_, vars) => {
       qc.invalidateQueries({ queryKey: ["note", vars.id] });
+    },
+  });
+}
+
+export function useUpdateNoteSourcePath() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: { id: string; path: string | null }) => {
+      const db = await getDb();
+      await db.execute(`UPDATE notes SET source_path = ? WHERE id = ?`, [
+        input.path,
+        input.id,
+      ]);
+    },
+    onSuccess: (_, vars) => {
+      qc.invalidateQueries({ queryKey: ["note", vars.id] });
+      qc.invalidateQueries({ queryKey: ["notes"] });
     },
   });
 }

@@ -61,8 +61,6 @@ export function SideNavBar({ width, collapsed }: { width: number; collapsed: boo
   const activeView = useLayoutStore((s) => s.activeView);
   const setActiveView = useLayoutStore((s) => s.setActiveView);
   const setSelectedNoteId = useLayoutStore((s) => s.setSelectedNoteId);
-  const showTerminal = useLayoutStore((s) => s.showTerminal);
-  const toggleTerminal = useLayoutStore((s) => s.toggleTerminal);
   const { data: recent = [] } = useRecentNotes(5);
 
   return (
@@ -112,13 +110,6 @@ export function SideNavBar({ width, collapsed }: { width: number; collapsed: boo
           collapsed ? "px-0 mx-0" : "px-sm mx-sm"
         }`}
       >
-        <NavItem
-          icon="terminal"
-          label="Terminal"
-          collapsed={collapsed}
-          active={showTerminal}
-          onClick={toggleTerminal}
-        />
         <NavItem
           icon="delete"
           label="Trash"
