@@ -2,7 +2,7 @@ name: ci
 
 on:
   push:
-    branches: [main, master]
+    branches: ["**"]
   pull_request:
     branches: [main, master]
   workflow_dispatch:
@@ -30,7 +30,8 @@ jobs:
         run: bun run build
 
   # Tauri build verification — full cross-platform compile (no release artifacts).
-  # Only runs on push to main/master, not every PR (saves CI minutes).
+  # Runs on push (any branch) + manual dispatch. Skipped on PR to save CI minutes
+  # (frontend job already verifies the JS side).
   tauri-build:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     needs: frontend
