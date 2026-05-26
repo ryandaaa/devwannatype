@@ -9,7 +9,7 @@
 [![Tauri](https://img.shields.io/badge/tauri-v2-white?style=flat-square&labelColor=141312)](https://tauri.app)
 [![Built with](https://img.shields.io/badge/built%20with-bun-white?style=flat-square&labelColor=141312)](https://bun.sh)
 
-no account · no cloud · no AI assistant · just write
+no account · no cloud · no AI assistant · just write it
 
 </div>
 
